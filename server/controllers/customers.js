@@ -1,6 +1,12 @@
 const Customer = require("../models").Customer;
-const validateRegisterInput = require("../../validation/register");
+
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const keys = require("../config/keys");
+//import validation files
+const validateRegisterInput = require("../../validation/register");
+const validateLoginInput = require("../../validation/login");
+
 module.exports = {
   //register customer
   register(req, res) {
@@ -42,6 +48,74 @@ module.exports = {
           });
         });
       }
+    });
+  },
+
+  //LOGIN a Customer:
+  login(req, res) {
+    const { errors, isValid } = validateLoginInput(req.body);
+    //Check Validations:
+    if (!isValid) {
+      return res.status(400).json(errors);
+    }
+
+    // const email = req.body.email;
+    const password = req.body.password;
+
+    //Find customer by email:
+    Customer.findOne({
+      where: {
+        email: req.body.email
+      }
+    })
+      .then(user => {
+        //Check for user
+        if (!user) {
+          errors.email = "User not found";
+          return res.status(404).json(errors);
+        }
+        //Check Password
+        bcrypt.compare(password, user.password).then(isMatch => {
+          if (isMatch) {
+            //user passed: generate token:
+            const payload = {
+              id: user.id,
+              name: user.name
+            }; // Create JWT Payload
+            // User Matched
+            jwt.sign(
+              payload,
+              keys.secretOrKey,
+              { expiresIn: 604800 },
+              (err, token) => {
+                res.json({
+                  success: true,
+                  token: "Bearer " + token
+                });
+              }
+            );
+          } else {
+            errors.password = "Password incorrect";
+            return res.status(400).json(errors);
+          }
+        });
+      })
+      .catch(error => res.status(400).send(error));
+  },
+
+  //GET CURRENT CUSTOMER/USER:
+
+  //@route GET request to api/users/current
+  //@desc: Return Current User (Token)
+  //@access: private
+
+  current(req, res) {
+    // res.json({ msg: "Success" });
+    // res.json(req.user);
+    res.json({
+      id: req.user.id,
+      name: req.user.name,
+      email: req.user.email
     });
   },
 
