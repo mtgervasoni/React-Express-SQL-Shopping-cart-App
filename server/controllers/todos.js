@@ -1,6 +1,8 @@
 const Todo = require("../models").Todo;
 const TodoItem = require("../models").TodoItem;
+
 module.exports = {
+  //CREATE
   create(req, res) {
     return Todo.create({
       title: req.body.title
@@ -8,6 +10,7 @@ module.exports = {
       .then(todo => res.status(201).send(todo))
       .catch(error => res.status(400).send(error));
   },
+  //DISPLAY ALL / LIST
   list(req, res) {
     return Todo.findAll({
       include: [

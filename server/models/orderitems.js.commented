@@ -1,0 +1,19 @@
+"use strict";
+module.exports = (sequelize, DataTypes) => {
+  const OrderItem = sequelize.define("orderitem", {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true
+    },
+    quantity: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
+    orderId: DataTypes.INTEGER,
+    itemId: DataTypes.INTEGER
+  });
+  return OrderItem;
+};
+
+// Now can use OrderItem.create({orderId: 1, itemId: 1})
