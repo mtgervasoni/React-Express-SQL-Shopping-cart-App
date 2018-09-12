@@ -26,18 +26,18 @@ module.exports = app => {
   //@route GET request to api/user/current
   //@desc: Return Current User (Token)
   //@access: Private:
-  // app.get(
-  //   "/api/user/current",
-  //   passport.authenticate("jwt", { session: false }),
-  //   customersController.current
-  // );
+  app.get(
+    "/api/user/current",
+    passport.authenticate("jwt", { session: false }),
+    customersController.current
+  );
   //TODO: Might have to fix:
   app.get(
     "/api/current",
     passport.authenticate("jwt", { session: false }),
     (req, res) => {
-      res.json({ msg: "Success" });
-      res.json(req.user);
+      // res.json({ msg: "Success" });
+      // res.json(req.user);
       res.json({
         id: req.user.id,
         name: req.user.name,

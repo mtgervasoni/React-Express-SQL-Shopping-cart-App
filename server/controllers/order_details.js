@@ -12,6 +12,7 @@ module.exports = {
       .then(orderitem => res.status(201).send(orderitem))
       .catch(error => res.status(400).send(error));
   },
+  //Update an item (change the quantity)
   update(req, res) {
     return OrderDetails.find({
       where: {

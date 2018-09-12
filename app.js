@@ -5,6 +5,9 @@ const bodyParser = require("body-parser");
 // Set up the express app
 const app = express();
 
+//passport for JWT auth
+const passport = require("passport");
+
 // Log requests to the console.
 app.use(logger("dev"));
 
@@ -12,6 +15,11 @@ app.use(logger("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+//Passport middleware:
+app.use(passport.initialize());
+
+//Passport Config (JWT Strategy):
+require("./server/config/passport.js")(passport);
 // Require our routes into the application.
 require("./server/routes")(app);
 
